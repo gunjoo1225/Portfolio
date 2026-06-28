@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>샘플 A — 다크 모던</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080b14;
+      --surface: #0f1623;
+      --border: rgba(99, 179, 237, 0.15);
+      --border-hover: rgba(99, 179, 237, 0.5);
+      --text: #e8edf5;
+      --sub: #7a8da8;
+      --accent: #63b3ed;
+      --accent2: #a78bfa;
+      --glow: rgba(99, 179, 237, 0.12);
+      --glow-hover: rgba(99, 179, 237, 0.22);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif;
+      min-height: 100vh;
+      padding: 60px 20px;
+    }
+
+    /* Background grid */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(99,179,237,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99,179,237,0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header */
+    .header {
+      margin-bottom: 64px;
+    }
+    .header-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+    .header-label::before {
+      content: '';
+      width: 24px;
+      height: 1px;
+      background: var(--accent);
+    }
+    .header h1 {
+      font-size: 42px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #e8edf5 30%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .header p {
+      font-size: 15px;
+      color: var(--sub);
+      line-height: 1.8;
+      max-width: 500px;
+    }
+
+    /* Cards */
+    .cards { display: flex; flex-direction: column; gap: 20px; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px 36px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 20px 40px;
+      align-items: start;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .card:hover {
+      border-color: var(--border-hover);
+      box-shadow: 0 0 40px var(--glow-hover), inset 0 0 40px var(--glow);
+    }
+    .card:hover::before { opacity: 1; }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .badge-blue   { background: rgba(99,179,237,0.12); color: var(--accent); border: 1px solid rgba(99,179,237,0.3); }
+    .badge-green  { background: rgba(52,211,153,0.1);  color: #34d399; border: 1px solid rgba(52,211,153,0.3); }
+    .badge-yellow { background: rgba(251,191,36,0.1);  color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+
+    .card-date { font-size: 12px; color: var(--sub); }
+
+    .card-sub {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--accent2);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .card h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      line-height: 1.4;
+      color: var(--text);
+    }
+
+    .card p {
+      font-size: 14px;
+      color: var(--sub);
+      line-height: 1.8;
+    }
+
+    .card-points {
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .card-points li {
+      list-style: none;
+      font-size: 13px;
+      color: #94adc4;
+      padding-left: 16px;
+      position: relative;
+    }
+    .card-points li::before {
+      content: '›';
+      position: absolute;
+      left: 2px;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .card-banner {
+      margin-top: 20px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .card-banner img { width: 100%; display: block; }
+
+    .card-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 16px;
+      padding-top: 2px;
+    }
+
+    .card-num {
+      font-size: 56px;
+      font-weight: 900;
+      line-height: 1;
+      background: linear-gradient(180deg, rgba(99,179,237,0.4) 0%, rgba(99,179,237,0.05) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      user-select: none;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: rgba(99,179,237,0.15);
+      color: var(--accent);
+      border: 1px solid rgba(99,179,237,0.35);
+    }
+    .btn-primary:hover {
+      background: rgba(99,179,237,0.25);
+      box-shadow: 0 0 20px rgba(99,179,237,0.2);
+    }
+
+    /* Section */
+    .section-label {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--sub);
+      margin: 52px 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .yt-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    .yt-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      text-decoration: none;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all 0.25s;
+    }
+    .yt-card:hover {
+      border-color: rgba(239,68,68,0.4);
+      box-shadow: 0 0 30px rgba(239,68,68,0.1);
+    }
+    .yt-icon {
+      width: 36px; height: 36px;
+      background: #ff0000;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .yt-icon svg { width: 20px; height: 20px; fill: #fff; }
+    .yt-card h3 { font-size: 15px; font-weight: 700; }
+    .yt-card p  { font-size: 13px; color: var(--sub); line-height: 1.6; }
+    .yt-link    { font-size: 12px; color: #ef4444; font-weight: 600; }
+
+    .footer {
+      margin-top: 64px;
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer p { font-size: 13px; color: var(--sub); }
+    .footer a  { font-size: 13px; color: var(--accent); text-decoration: none; }
+
+    /* Design label */
+    .design-tag {
+      position: fixed;
+      top: 16px; right: 16px;
+      background: var(--accent);
+      color: #080b14;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.06em;
+      z-index: 100;
+    }
+
+    @media (max-width: 600px) {
+      .card { grid-template-columns: 1fr; padding: 24px 20px; }
+      .yt-cards { grid-template-columns: 1fr; }
+      .header h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+    <div class="header">
+      <div class="header-label">AI 활용 작업 소개</div>
+      <h1>AI로 만든 것들을<br>직접 확인해 보세요.</h1>
+      <p>AI 교육, 출판 지원, 카탈로그 디자인, 쇼핑몰 구축까지 — AI를 실무에 적용한 작업 결과물을 소개합니다.</p>
+    </div>
+
+    <div class="section-label">교육</div>
+    <div class="cards">
+
+      <div class="card">
+        <div class="card-left">
+          <div class="card-meta">
+            <span class="badge badge-blue">AI 교육</span>
+            <span class="badge badge-green">완료</span>
+            <span class="card-date">2026. 6. 22 – 24</span>
+          </div>
+          <div class="card-sub">나사렛 성결교단 목회자 세미나</div>
+          <h2>AI를 통한 교회 업무 자동화 교육</h2>
+          <p>교단 목회자 세미나에서 진행한 AI 실무 교육 자료입니다. 설교 준비, 공문서 작성 등 교회 현장에서 바로 쓸 수 있는 AI 활용법을 단계별로 구성했습니다.</p>
+          <ul class="card-points">
+            <li>ChatGPT 기반 설교 및 주보 초안 작성</li>
+            <li>반복 업무 자동화 (공문서·이메일·보고서)</li>
+            <li>실습 중심 커리큘럼 (3일 과정)</li>
+          </ul>
+        </div>
+        <div class="card-right">
+          <span class="card-num">01</span>
+          <a href="https://ai-church-ebook.vercel.app/" target="_blank" rel="noopener" class="btn btn-primary">샘플 보기 →</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="section-label">출판 지원</div>
+    <div class="cards">
+
+      <div class="card">
+        <div class="card-left">
+          <div class="card-meta">
+            <span class="badge badge-blue">출판 지원</span>
+            <span class="badge badge-blue">배너 디자인</span>
+            <span class="badge badge-green">완료</span>
+            <span class="badge badge-yellow">레위기편 진행중</span>
+          </div>
+          <div class="card-sub">나사렛성결회 총회교육국</div>
+          <h2>소그룹 성결교육 시리즈<br>교재 출판 업무 지원 및 배너 디자인</h2>
+          <p>
+            『생명과 믿음의 뿌리: 창세기편』,
+            『하나님의 거룩함 안으로: 출애굽기편』
+            교재 출판 과정에서 AI를 활용해 편집·홍보 업무를 지원했습니다.
+          </p>
+          <ul class="card-points">
+            <li>AI 활용 교재 내용 정리 초안 제작</li>
+            <li>교단 홍보용 와이드 배너 디자인 직접 제작</li>
+            <li>PDF 파일 배포 방식 기획 지원</li>
+            <li>레위기편 작업 진행중</li>
+          </ul>
+          <div class="card-banner">
+            <img src="images/banner-exodus.png" alt="소그룹 구역공과 출애굽기편 홍보 배너" />
+          </div>
+        </div>
+        <div class="card-right">
+          <span class="card-num">02</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-left">
+          <div class="card-meta">
+            <span class="badge badge-blue">출판 지원</span>
+            <span class="badge badge-blue">배너 디자인</span>
+            <span class="badge badge-green">완료</span>
+          </div>
+          <div class="card-sub">대한기독교나사렛성결회 교육국</div>
+          <h2>2026 여름성경학교 교재 출판 업무 지원</h2>
+          <p>2026 여름성경학교 "BIBLE TOUR — His Story" 교재 출판에 AI를 활용해 Workbook 초안 제작을 지원했습니다.</p>
+          <ul class="card-points">
+            <li>여름성경학교 교재 편집 보조 (AI 활용)</li>
+            <li>교재 사용 이미지 생성 및 교육용 영상 제작 지원</li>
+          </ul>
+          <div class="card-banner">
+            <img src="images/banner-summer-bible.jpg" alt="2026 여름성경학교 교사강습회 배너" />
+          </div>
+        </div>
+        <div class="card-right">
+          <span class="card-num">03</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="section-label">웹 · 디자인</div>
+    <div class="cards">
+
+      <div class="card">
+        <div class="card-left">
+          <div class="card-meta">
+            <span class="badge badge-blue">카탈로그 제작</span>
+            <span class="badge badge-yellow">진행중</span>
+          </div>
+          <div class="card-sub">HANROOT 2026 COLLECTION</div>
+          <h2>종이 카탈로그 제작을 위한 디지털 샘플</h2>
+          <p>실제 인쇄 카탈로그 제작 전 AI를 활용해 레이아웃·색상·텍스트를 빠르게 시안화한 디지털 샘플입니다. 현재 경비복 업체 카탈로그 제작을 진행중입니다.</p>
+          <ul class="card-points">
+            <li>AI 기반 레이아웃 · 카피 초안 작업</li>
+            <li>인쇄 규격에 맞춘 디지털 프리뷰</li>
+            <li>수정 요청 즉시 반영 가능한 구조</li>
+          </ul>
+        </div>
+        <div class="card-right">
+          <span class="card-num">04</span>
+          <a href="https://hanroot.vercel.app/" target="_blank" rel="noopener" class="btn btn-primary">샘플 보기 →</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-left">
+          <div class="card-meta">
+            <span class="badge badge-blue">쇼핑몰 구축</span>
+            <span class="badge badge-green">샘플 완성</span>
+          </div>
+          <div class="card-sub">BEANS — 한국엘리스테이블</div>
+          <h2>커스텀 쇼핑몰 구축 샘플</h2>
+          <p>AI를 활용해 디자인부터 기능 구현까지 빠르게 완성한 쇼핑몰 구축 샘플입니다.</p>
+          <ul class="card-points">
+            <li>상품 목록 · 상세 · 장바구니 · 결제 흐름 구현</li>
+            <li>회원 · 마이페이지 · 구독 기능 포함</li>
+          </ul>
+        </div>
+        <div class="card-right">
+          <span class="card-num">05</span>
+          <a href="https://beans-sigma.vercel.app/index.html" target="_blank" rel="noopener" class="btn btn-primary">샘플 보기 →</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="section-label">유튜브 채널 운영</div>
+    <div class="yt-cards">
+      <a class="yt-card" href="https://www.youtube.com/@BibleStudy-n7b" target="_blank" rel="noopener">
+        <div class="yt-icon"><svg viewBox="0 0 24 24"><path d="M23.5 6.2s-.3-1.9-1.1-2.7c-1-1.1-2.2-1.1-2.7-1.2C16.8 2 12 2 12 2s-4.8 0-7.7.3c-.5.1-1.7.1-2.7 1.2C.8 4.3.5 6.2.5 6.2S.2 8.4.2 10.6v2.1c0 2.2.3 4.4.3 4.4s.3 1.9 1.1 2.7c1 1.1 2.4 1 3 1.1C6.8 21 12 21 12 21s4.8 0 7.7-.3c.5-.1 1.7-.1 2.7-1.2.8-.8 1.1-2.7 1.1-2.7s.3-2.2.3-4.4v-2.1c0-2.2-.3-4.4-.3-4.1zM9.7 15.5V8.4l7.3 3.6-7.3 3.5z"/></svg></div>
+        <h3>평신도 사역자 클래스 (평사클)</h3>
+        <p>성경 말씀 중심의 교육 콘텐츠 채널</p>
+        <div class="yt-link">@BibleStudy-n7b →</div>
+      </a>
+      <a class="yt-card" href="https://www.youtube.com/@Nerwordlight" target="_blank" rel="noopener">
+        <div class="yt-icon"><svg viewBox="0 0 24 24"><path d="M23.5 6.2s-.3-1.9-1.1-2.7c-1-1.1-2.2-1.1-2.7-1.2C16.8 2 12 2 12 2s-4.8 0-7.7.3c-.5.1-1.7.1-2.7 1.2C.8 4.3.5 6.2.5 6.2S.2 8.4.2 10.6v2.1c0 2.2.3 4.4.3 4.4s.3 1.9 1.1 2.7c1 1.1 2.4 1 3 1.1C6.8 21 12 21 12 21s4.8 0 7.7-.3c.5-.1 1.7-.1 2.7-1.2.8-.8 1.1-2.7 1.1-2.7s.3-2.2.3-4.4v-2.1c0-2.2-.3-4.4-.3-4.1zM9.7 15.5V8.4l7.3 3.6-7.3 3.5z"/></svg></div>
+        <h3>넬워드라이트</h3>
+        <p>어린이를 위한 성경 동화 애니메이션 채널</p>
+        <div class="yt-link">@Nerwordlight →</div>
+      </a>
+    </div>
+
+    <div class="footer">
+      <p>궁금한 점이 있으시면 언제든지 연락 주세요.</p>
+      <a href="mailto:gunjoo1225@gmail.com">gunjoo1225@gmail.com</a>
+    </div>
+  </div>
+</body>
+</html>
