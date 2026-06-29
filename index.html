@@ -312,6 +312,41 @@
       .yt-cards { grid-template-columns: 1fr; }
       .header h1 { font-size: 28px; }
     }
+    .lightbox-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+    .lightbox-overlay.active { display: flex; }
+    .lightbox-overlay img {
+      max-width: 92vw;
+      max-height: 88vh;
+      border-radius: 8px;
+      object-fit: contain;
+    }
+    .lightbox-close {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      background: rgba(255,255,255,0.15);
+      border: none;
+      color: #fff;
+      font-size: 28px;
+      line-height: 1;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .lightbox-close:hover { background: rgba(255,255,255,0.3); }
+    .lightbox-trigger { cursor: zoom-in; }
   </style>
 </head>
 <body>
@@ -375,7 +410,7 @@
             <li>레위기편 작업 진행 중</li>
           </ul>
           <div class="card-banner">
-            <img src="images/banner-exodus.png" alt="소그룹 구역공과 출애굽기편 홍보 배너" />
+            <img src="images/banner-exodus.png" alt="소그룹 구역공과 출애굽기편 홍보 배너" class="lightbox-trigger" />
           </div>
           <div style="margin-top:16px;">
             <a href="제20과 출애굽기의 핵심.pdf" target="_blank" rel="noopener" class="btn btn-primary" style="display:inline-flex; align-items:center; gap:8px;">
@@ -499,6 +534,7 @@
             <li>총 379장 정리 및 카테고리별 전자 앨범 구성</li>
             <li>온라인 공유 가능한 갤러리 형태로 제작</li>
           </ul>
+          <img src="images/cbmc-album-preview.png" alt="창립대회 전자 앨범 미리보기" class="lightbox-trigger" style="width:100%; border-radius:8px; margin-top:16px; display:block; clip-path: inset(2px 0 0 0);">
         </div>
         <div class="card-right">
           <span class="card-num">07</span>
@@ -531,5 +567,33 @@
       </div>
     </div>
   </div>
+
+  <div class="lightbox-overlay" id="lightbox">
+    <button class="lightbox-close" id="lightboxClose">✕</button>
+    <img id="lightboxImg" src="" alt="">
+  </div>
+
+  <script>
+    const overlay = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightboxImg');
+
+    document.querySelectorAll('.lightbox-trigger').forEach(img => {
+      img.addEventListener('click', () => {
+        lightboxImg.src = img.src;
+        lightboxImg.alt = img.alt;
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    function closeLightbox() {
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeLightbox(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+  </script>
 </body>
 </html>
