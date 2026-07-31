@@ -35,11 +35,19 @@
       margin: 0 auto;
     }
 
+    /* Site top fixed block */
+    .site-top {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background: var(--bg);
+    }
+
     /* Header */
     .header {
-      margin-bottom: 80px;
-      padding-top: 60px;
-      padding-bottom: 64px;
+      margin-bottom: 0;
+      padding-top: 36px;
+      padding-bottom: 32px;
       border-bottom: 1px solid var(--border);
       position: relative;
       overflow: hidden;
@@ -94,7 +102,6 @@
     /* Section divider */
     .section-label {
       font-size: 11px;
-      scroll-margin-top: 68px;
       font-weight: 700;
       letter-spacing: 0.14em;
       text-transform: uppercase;
@@ -281,12 +288,8 @@
 
     /* Top Nav */
     .top-nav {
-      position: sticky;
-      top: 0;
-      z-index: 1000;
+      position: static;
       background: rgba(8,9,6,0.92);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: center;
@@ -303,8 +306,8 @@
     }
     .top-nav a {
       display: inline-block;
-      padding: 6px 14px;
-      font-size: 12px;
+      padding: 6px 16px;
+      font-size: 14px;
       font-weight: 600;
       letter-spacing: 0.04em;
       color: var(--sub);
@@ -379,26 +382,28 @@
   </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="header">
-    <canvas id="beams-canvas"></canvas>
-    <div class="header-content">
-      <div class="header-label">AI 활용 작업 소개</div>
-      <h1>AI로 완성한실무 작업들</h1>
-      <p>교육, 출판, 디자인, 쇼핑몰까지<br>— 아이디어가 아니라 직접 만든 결과물로 보여드립니다.</p>
+<div class="site-top" id="site-top">
+  <div class="wrap">
+    <div class="header">
+      <canvas id="beams-canvas"></canvas>
+      <div class="header-content">
+        <div class="header-label">AI 활용 작업 소개</div>
+        <h1>AI로 완성한실무 작업들</h1>
+        <p>교육, 출판, 디자인, 쇼핑몰까지<br>— 아이디어가 아니라 직접 만든 결과물로 보여드립니다.</p>
+      </div>
     </div>
   </div>
+  <nav class="top-nav">
+    <ul>
+      <li><a href="#sec-edu">교육</a></li>
+      <li><a href="#sec-pub">출판 지원</a></li>
+      <li><a href="#sec-web">웹 · 디자인</a></li>
+      <li><a href="#sec-media">영상 · 사진</a></li>
+      <li><a href="#sec-yt">유튜브</a></li>
+    </ul>
+  </nav>
 </div>
-<nav class="top-nav">
-  <ul>
-    <li><a href="#sec-edu">교육</a></li>
-    <li><a href="#sec-pub">출판 지원</a></li>
-    <li><a href="#sec-web">웹 · 디자인</a></li>
-    <li><a href="#sec-media">영상 · 사진</a></li>
-    <li><a href="#sec-yt">유튜브</a></li>
-  </ul>
-</nav>
-<div class="wrap">
+<div class="wrap" id="main-wrap">
 
   <div class="section-label" id="sec-edu">교육</div>
   <div class="cards">
@@ -622,6 +627,23 @@
   <button class="lightbox-close" id="lightboxClose">✕</button>
   <img id="lightboxImg" src="" alt="">
 </div>
+
+<script>
+(function() {
+  function setMainPadding() {
+    const siteTop = document.getElementById('site-top');
+    const mainWrap = document.getElementById('main-wrap');
+    if (!siteTop || !mainWrap) return;
+    const h = siteTop.offsetHeight;
+    mainWrap.style.paddingTop = (h + 24) + 'px';
+    document.querySelectorAll('.section-label').forEach(el => {
+      el.style.scrollMarginTop = (h + 16) + 'px';
+    });
+  }
+  setMainPadding();
+  window.addEventListener('resize', setMainPadding);
+})();
+</script>
 
 <script>
 (function() {
